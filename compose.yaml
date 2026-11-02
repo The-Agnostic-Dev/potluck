@@ -1,0 +1,8 @@
+services:
+  potluck:
+    build: .
+    ports:
+      - "5103:5103"
+    environment:
+      PORT: 5103
+    restart: unless-stopped
