@@ -1,6 +1,23 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mergeIngredients, normaliseName, validateNewItem } from '../server/shopping.ts'
 import type { ShoppingItem } from '../server/types.ts'
+import { createPinia, setActivePinia } from 'pinia'
+import { useShoppingStore } from '../src/stores/shopping.ts'
+
+vi.mock('@/api', async () => {
+  const { seedShoppingList } = await import('../server/seed.ts')
+  return {
+    fetchShoppingList: vi.fn(async () => seedShoppingList()),
+    setItemChecked: vi.fn(async (id: number, checked: boolean) => {
+      const item = seedShoppingList().find((i) => i.id === id)
+      return { ...item!, checked }
+    }),
+    addShoppingItem: vi.fn(),
+    removeCheckedItems: vi.fn(),
+    updateShoppingItem: vi.fn(),
+    deleteShoppingItem: vi.fn(),
+  }
+})
 
 function idCounter(start = 100) {
   let id = start
@@ -61,5 +78,23 @@ describe('mergeIngredients', () => {
   it('does not mutate the original list', () => {
     mergeIngredients(baseList, [{ name: 'onion', quantity: 1, unit: 'pcs' }], idCounter())
     expect(baseList[0].quantity).toBe(2)
+  })
+})
+
+describe('shopping store', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
+  it('counts unticked items and updates when toggled', async () => {
+    const shopping = useShoppingStore()
+    await shopping.load()
+    expect(shopping.remainingCount).toBe(5)
+
+    await shopping.setChecked(1, true)
+    expect(shopping.remainingCount).toBe(4)
+
+    await shopping.setChecked(3, false)
+    expect(shopping.remainingCount).toBe(6)
   })
 })
