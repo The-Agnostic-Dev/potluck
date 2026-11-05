@@ -15,7 +15,7 @@ export const useShoppingStore = defineStore('shopping', () => {
     }),
   )
 
-  const remainingCount = computed(() => items.value.filter((item) => item.checked).length)
+  const remainingCount = computed(() => items.value.filter((item) => !item.checked).length)
 
   async function load() {
     loading.value = true

@@ -3,13 +3,13 @@ import { computed, onMounted } from 'vue'
 import AddItemForm from '@/components/AddItemForm.vue'
 import { useShoppingStore } from '@/stores/shopping'
 import { formatQuantity } from '@/utils/units'
+import type { ShoppingItem } from '@/types'
 
 const shopping = useShoppingStore()
 
 const hasChecked = computed(() => shopping.items.some((item) => item.checked))
 
-function onToggle(index: number) {
-  const item = shopping.items[index]
+function onToggle(item: ShoppingItem) {
   shopping.setChecked(item.id, !item.checked)
 }
 
@@ -35,13 +35,13 @@ onMounted(() => {
 
     <ul class="shopping card" data-testid="shopping-list">
       <li
-        v-for="(item, index) in shopping.sortedItems"
+        v-for="item in shopping.sortedItems"
         :key="item.id"
         :class="{ done: item.checked }"
         data-testid="shopping-item"
       >
         <label>
-          <input type="checkbox" :checked="item.checked" @change="onToggle(index)" />
+          <input type="checkbox" :checked="item.checked" @change="onToggle(item)" />
           <span class="name">{{ item.name }}</span>
         </label>
         <span class="qty">{{ formatQuantity(item.quantity, item.unit) }}</span>
