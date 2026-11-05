@@ -95,6 +95,6 @@ describe('shopping store', () => {
     expect(shopping.remainingCount).toBe(4)
 
     await shopping.setChecked(3, false)
-    expect(shopping.remainingCount).toBe(6)
+    expect(shopping.remainingCount).toBe(5)
   })
 })
