@@ -3,6 +3,7 @@ import { mergeIngredients, normaliseName, validateNewItem } from '../server/shop
 import type { ShoppingItem } from '../server/types.ts'
 import { createPinia, setActivePinia } from 'pinia'
 import { useShoppingStore } from '../src/stores/shopping.ts'
+import * as api from '@/api'
 
 vi.mock('@/api', async () => {
   const { seedShoppingList } = await import('../server/seed.ts')
@@ -96,5 +97,20 @@ describe('shopping store', () => {
 
     await shopping.setChecked(3, false)
     expect(shopping.remainingCount).toBe(5)
+  })
+
+  it('toggle uses item id and flips checked state', async () => {
+    const shopping = useShoppingStore()
+    await shopping.load()
+
+    const eggs = shopping.items.find((item) => item.id === 3)!
+    await shopping.toggle(eggs)
+    expect(shopping.remainingCount).toBe(6)
+    expect(api.setItemChecked).toHaveBeenCalledWith(3, false)
+
+    const tomatoes = shopping.items.find((item) => item.id === 1)!
+    await shopping.toggle(tomatoes)
+    expect(shopping.remainingCount).toBe(5)
+    expect(api.setItemChecked).toHaveBeenCalledWith(1, true)
   })
 })

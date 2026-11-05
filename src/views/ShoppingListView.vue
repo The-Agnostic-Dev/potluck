@@ -3,15 +3,10 @@ import { computed, onMounted } from 'vue'
 import AddItemForm from '@/components/AddItemForm.vue'
 import { useShoppingStore } from '@/stores/shopping'
 import { formatQuantity } from '@/utils/units'
-import type { ShoppingItem } from '@/types'
 
 const shopping = useShoppingStore()
 
 const hasChecked = computed(() => shopping.items.some((item) => item.checked))
-
-function onToggle(item: ShoppingItem) {
-  shopping.setChecked(item.id, !item.checked)
-}
 
 onMounted(() => {
   shopping.load()
@@ -41,7 +36,7 @@ onMounted(() => {
         data-testid="shopping-item"
       >
         <label>
-          <input type="checkbox" :checked="item.checked" @change="onToggle(item)" />
+          <input type="checkbox" :checked="item.checked" @change="shopping.toggle(item)" />
           <span class="name">{{ item.name }}</span>
         </label>
         <span class="qty">{{ formatQuantity(item.quantity, item.unit) }}</span>
