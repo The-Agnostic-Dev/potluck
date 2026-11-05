@@ -82,4 +82,4 @@ tests/           Vitest specs
 
 - Ingredient names are stored lower case; the shopping list merges lines with the
   same name and unit.
-- The meal planner weeks run Monday to Sunday.
+- The meal planner weeks run Sunday to Saturday.

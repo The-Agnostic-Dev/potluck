@@ -1,8 +1,7 @@
-/** Local midnight on the Monday of the week containing `date`. */
+/** Local midnight on the Sunday of the week containing `date`. */
 export function startOfWeek(date: Date): Date {
   const start = new Date(date.getFullYear(), date.getMonth(), date.getDate())
-  const daysSinceMonday = (start.getDay() + 6) % 7
-  start.setDate(start.getDate() - daysSinceMonday)
+  start.setDate(start.getDate() - start.getDay())
   return start
 }
 
@@ -14,7 +13,10 @@ export function addDays(date: Date, days: number): Date {
 
 /** The YYYY-MM-DD key the API uses for a calendar day. */
 export function dateKey(date: Date): string {
-  return date.toISOString().slice(0, 10)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 export function parseDateKey(key: string): Date {
@@ -23,8 +25,8 @@ export function parseDateKey(key: string): Date {
 }
 
 export function weekKeys(anchor: Date): string[] {
-  const monday = startOfWeek(anchor)
-  return Array.from({ length: 7 }, (_, index) => dateKey(addDays(monday, index)))
+  const sunday = startOfWeek(anchor)
+  return Array.from({ length: 7 }, (_, index) => dateKey(addDays(sunday, index)))
 }
 
 export function formatDayLabel(key: string): { weekday: string; date: string } {
