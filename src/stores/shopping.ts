@@ -15,7 +15,7 @@ export const useShoppingStore = defineStore('shopping', () => {
     }),
   )
 
-  const remainingCount = computed(() => items.value.filter((item) => item.checked).length)
+  const remainingCount = computed(() => items.value.filter((item) => !item.checked).length)
 
   async function load() {
     loading.value = true
@@ -39,6 +39,10 @@ export const useShoppingStore = defineStore('shopping', () => {
     items.value = items.value.map((item) => (item.id === id ? updated : item))
   }
 
+  function toggle(item: ShoppingItem) {
+    return setChecked(item.id, !item.checked)
+  }
+
   async function remove(id: number) {
     items.value = await api.deleteShoppingItem(id)
   }
@@ -56,6 +60,7 @@ export const useShoppingStore = defineStore('shopping', () => {
     addItem,
     addRecipe,
     setChecked,
+    toggle,
     remove,
     clearChecked,
   }
